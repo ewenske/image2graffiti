@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Image2Graffiti", "Image2Graffiti\Image2Graffiti.csproj", "{24362E5C-46F0-4A20-9CE2-2950DB2E6819}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{24362E5C-46F0-4A20-9CE2-2950DB2E6819}.Debug|x86.ActiveCfg = Debug|x86
+		{24362E5C-46F0-4A20-9CE2-2950DB2E6819}.Debug|x86.Build.0 = Debug|x86
+		{24362E5C-46F0-4A20-9CE2-2950DB2E6819}.Release|x86.ActiveCfg = Release|x86
+		{24362E5C-46F0-4A20-9CE2-2950DB2E6819}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
