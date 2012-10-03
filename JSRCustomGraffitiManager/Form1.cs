@@ -37,7 +37,7 @@ namespace JSRCustomGraffitiManager
         private void Form1_Load(object sender, EventArgs e)
         {
             LoadConfig();
-            PopulateList();
+            OpenJSRSavePath(jsrSavePath);
         }
 
         private void buttonOpenJSRSave_Click(object sender, EventArgs e)
@@ -51,9 +51,17 @@ namespace JSRCustomGraffitiManager
 
             if (folderDialog.ShowDialog() == DialogResult.OK)
             {
-                jsrSavePath = folderDialog.SelectedPath;
-                PopulateList();
+                OpenJSRSavePath(folderDialog.SelectedPath);
                 SaveConfig();
+            }
+        }
+
+        private void OpenJSRSavePath(string path)
+        {
+            jsrSavePath = path;
+            if (SetupSaveSlots())
+            {
+                PopulateList();
             }
         }
 
@@ -87,14 +95,63 @@ namespace JSRCustomGraffitiManager
             }
         }
 
-        private void PopulateList()
+        private bool SetupSaveSlots()
         {
+            comboBoxSaveSlots.Enabled = false;
             textBoxSaveFolder.Text = jsrSavePath;
 
             try
             {
-                string[] filePaths = Directory.GetFiles(Path.Combine(jsrSavePath, "remote\\save\\0"));
+                //Find all of the save slot directories
+                string[] savePaths = Directory.GetDirectories(Path.Combine(jsrSavePath, "remote\\save\\"));       
+
+                //We need save slots to edit graffiti, tell users to go create a save file first
+                if (savePaths.Length <= 0)
+                {
+                    MessageBox.Show("There are no saved games yet. Go play the game and create a save first!");
+                    return false;
+                }
+
+                comboBoxSaveSlots.Enabled = true;
+
+                foreach (string s in savePaths)
+                {
+                    comboBoxSaveSlots.Items.Add(s.Substring(Path.Combine(jsrSavePath, "remote\\save\\").Length));
+                }
+
+                comboBoxSaveSlots.SelectedIndex = 0;
+
+            }
+            catch
+            {
+            }
+
+            return true;
+        }
+
+        private void PopulateList()
+        {
+            pictureBoxS.Image  = null;
+            pictureBoxL.Image  = null;
+            pictureBoxXL.Image = null;
+
+            labelNoGraffitiWarningL.Visible = false;
+            labelNoGraffitiWarningS.Visible = false;
+            labelNoGraffitiWarningXL.Visible = false;
+
+            buttonReplaceS.Enabled  = false;
+            buttonReplaceL.Enabled  = false;
+            buttonReplaceXL.Enabled = false;
+
+            try
+            {
+                string[] filePaths = Directory.GetFiles(Path.Combine(jsrSavePath, "remote\\save\\" + (string)comboBoxSaveSlots.SelectedItem));
                 files = new List<string>();
+
+                List<string> tagNames = new List<string>();
+                tagNames.Add("jetset___sma");
+                tagNames.Add("jetset___lar");
+                tagNames.Add("jetset___xla");
 
                 foreach (string s in filePaths)
                 {
@@ -103,6 +160,36 @@ namespace JSRCustomGraffitiManager
                     if (fileName == "jetset___lar" || fileName == "jetset___sma" || fileName == "jetset___xla")
                     {
                         DisplayGraffiti(s);
+                        tagNames.Remove(fileName);
+
+                        if (fileName == "jetset___sma")
+                        {
+                            buttonReplaceS.Enabled = true;
+                        }
+                        else if (fileName == "jetset___lar")
+                        {
+                            buttonReplaceL.Enabled = true;
+                        }
+                        else if (fileName == "jetset___xla")
+                        {
+                            buttonReplaceXL.Enabled = true;
+                        }
+                    }
+                }
+
+                foreach (string s in tagNames)
+                {
+                    if (s == "jetset___sma")
+                    {
+                        labelNoGraffitiWarningS.Visible = true;
+                    }
+                    else if (s == "jetset___lar")
+                    {
+                        labelNoGraffitiWarningL.Visible = true;
+                    }
+                    else if (s == "jetset___xla")
+                    {
+                        labelNoGraffitiWarningXL.Visible = true;
                     }
                 }
             }
@@ -170,7 +257,7 @@ namespace JSRCustomGraffitiManager
                 fileName = "jetset___xla";
             }
 
-            string outputPath = Path.Combine(Path.Combine(jsrSavePath, "remote\\save\\0"), fileName);
+            string outputPath = Path.Combine(Path.Combine(jsrSavePath, "remote\\save\\" + (string)comboBoxSaveSlots.SelectedItem), fileName);
 
             if (File.Exists(outputPath))
             {
@@ -357,13 +444,17 @@ namespace JSRCustomGraffitiManager
             AttemptOpenFile();
         }
 
-        private void textBoxSaveFolder_TextChanged(object sender, EventArgs e)
+        private void comboBoxSaveSlots_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bool enable = textBoxSaveFolder.Text.Length > 0;
+            PopulateList();
+        }
 
-            buttonReplaceS.Enabled = enable;
-            buttonReplaceL.Enabled = enable;
-            buttonReplaceXL.Enabled = enable;
+        private void buttonHelp_Click(object sender, EventArgs e)
+        {
+            buttonHelp.Visible = false;
+            labelProTip1.Visible = true;
+            labelProTip2.Visible = true;
+            labelProTip3.Visible = true;
         }
     }
 }
