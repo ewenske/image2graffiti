@@ -1,0 +1,1 @@
+Converts an image into a Jet Set Radio graffiti bin file.
