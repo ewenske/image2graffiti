@@ -155,8 +155,8 @@ namespace JSRCustomGraffitiManager
 
                 foreach (string s in filePaths)
                 {
-                    string fileName = Path.GetFileName(s);
-
+                    string fileName = Path.GetFileName(s).ToLower();
+                    
                     if (fileName == "jetset___lar" || fileName == "jetset___sma" || fileName == "jetset___xla")
                     {
                         DisplayGraffiti(s);
